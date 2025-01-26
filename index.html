@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - خاتمة قرآن كريم</title>
+    <!-- مكتبة Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- مكتبة Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
+    <!-- مكتبة SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- تنسيقات CSS المخصصة -->
+    <style>
+        /* تنسيقات عامة */
+        :root {
+            --primary-color: #d4af37;
+            --secondary-color: #b8860b;
+            --background-color: #faf8f5;
+            --text-color: #5a4a42;
+            --dark-background: #1e1e1e;
+            --dark-text: #e0e0e0;
+            --completed-color: #4CAF50; /* أخضر */
+            --in-progress-color: #FFEB3B; /* أصفر */
+            --not-started-color: #FF5252; /* أحمر */
+            --locked-color: #9E9E9E; /* رمادي */
+        }
+
+        body {
+            font-family: 'Lateef', serif;
+            font-size: 1.2em;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin: 0;
+            padding: 0;
+        }
+
+        body.dark-mode {
+            background-color: var(--dark-background);
+            color: var(--dark-text);
+            font-size: 1.3em;
+        }
+
+        /* صندوق العنوان */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            border: 2px solid #e0d7c3;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0;
+        }
+
+        /* قسم الإحصائيات */
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            padding: 10px;
+            margin: 10px;
+            background-color: #fffaf0;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats div {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: var(--primary-color);
+            color: #fff;
+            flex: 1;
+        }
+
+        .stats div span {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* قسم الأجزاء */
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background-color: #fffaf0;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            overflow-x: auto; /* لجعل الجدول قابل للتمرير أفقيًا */
+        }
+
+        .section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .section table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px; /* الحد الأدنى لعرض الجدول */
+        }
+
+        .section table th,
+        .section table td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #e0d7c3;
+        }
+
+        .section table th {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .section table td {
+            background-color: #fff;
+        }
+
+        .section table td.completed {
+            background-color: var(--completed-color);
+            color: #fff;
+        }
+
+        .section table td.in-progress {
+            background-color: var(--in-progress-color);
+        }
+
+        .section table td.not-started {
+            background-color: var(--not-started-color);
+            color: #fff;
+        }
+
+        .section table td.locked {
+            background-color: var(--locked-color);
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .action-button.reset {
+            background: linear-gradient(135deg, #FF5252, #D32F2F);
+        }
+
+        .action-button.kick {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+        }
+
+        /* تحسين التنسيق للهواتف */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header h2 {
+                font-size: 1.2rem;
+            }
+
+            .section h3 {
+                font-size: 1.3rem;
+            }
+
+            .section table th,
+            .section table td {
+                padding: 6px;
+                font-size: 0.9em;
+            }
+
+            .action-button {
+                padding: 5px 10px;
+                font-size: 0.8em;
+            }
+
+            .stats div span {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
+
+            .header h2 {
+                font-size: 1rem;
+            }
+
+            .section h3 {
+                font-size: 1.1rem;
+            }
+
+            .section table th,
+            .section table td {
+                padding: 4px;
+                font-size: 0.8em;
+            }
+
+            .action-button {
+                padding: 4px 8px;
+                font-size: 0.7em;
+            }
+
+            .stats div span {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center mt-4">
+        <!-- صندوق العنوان -->
+        <div class="header">
+            <h1><i class="fas fa-cogs"></i> لوحة التحكم</h1>
+            <h2>إدارة الأجزاء والإحصائيات</h2>
+        </div>
+
+        <!-- قسم الإحصائيات -->
+        <div class="stats">
+            <div>
+                <span id="visitor-count">0</span>
+                <p>عدد الزوار</p>
+            </div>
+            <div>
+                <button class="action-button reset" onclick="resetAllJuz()">إعادة تعيين الكل</button>
+            </div>
+        </div>
+
+        <!-- لوحة التحكم -->
+        <div class="dashboard">
+            <!-- قسم الأجزاء -->
+            <div class="section">
+                <h3>قائمة الأجزاء</h3>
+                <table id="juz-table">
+                    <thead>
+                        <tr>
+                            <th>الجزء</th>
+                            <th>الحالة</th>
+                            <th>القارئ</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- سيتم تعبئة الأجزاء هنا -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- مكتبة SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- مكتبة Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <!-- الكود JavaScript -->
+    <script>
+        // تهيئة Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVSn2N0rlUt48cFKWQ7FygEjpiUa3VoK4",
+            authDomain: "seal-israa.firebaseapp.com",
+            databaseURL: "https://seal-israa-default-rtdb.firebaseio.com",
+            projectId: "seal-israa",
+            storageBucket: "seal-israa.appspot.com",
+            messagingSenderId: "184775142966",
+            appId: "1:184775142966:web:c4798e1aa4be4c47c5b297",
+            measurementId: "G-DPZCHE49WM"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const juzCount = 30;
+
+            // عرض قائمة الأجزاء
+            function renderJuzTable() {
+                database.ref('juz').once('value', (snapshot) => {
+                    const juzData = snapshot.val() || {};
+                    let juzTableHtml = '';
+                    for (let i = 1; i <= juzCount; i++) {
+                        const status = juzData[i]?.status || 'not-started';
+                        const readerName = juzData[i]?.readerName || '';
+
+                        juzTableHtml += `
+                            <tr>
+                                <td>الجزء ${i}</td>
+                                <td class="${status}">${status === 'completed' ? 'منتهي' : status === 'in-progress' ? 'قيد القراءة' : 'لم يبدأ'}</td>
+                                <td>${readerName}</td>
+                                <td>
+                                    ${status === 'in-progress' ? `
+                                        <button class="action-button kick" onclick="kickUserFromJuz(${i})">طرد</button>
+                                    ` : ''}
+                                    <button class="action-button reset" onclick="resetJuz(${i})">إعادة تعيين</button>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                    document.getElementById('juz-table').querySelector('tbody').innerHTML = juzTableHtml;
+                });
+            }
+
+            // إعادة تعيين جزء معين
+            window.resetJuz = function(juzNumber) {
+                Swal.fire({
+                    icon: 'question',
+                    title: 'هل أنت متأكد؟',
+                    text: `هل تريد إعادة تعيين الجزء ${juzNumber}؟`,
+                    showCancelButton: true,
+                    confirmButtonText: 'نعم',
+                    cancelButtonText: 'لا',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        database.ref(`juz/${juzNumber}`).set({
+                            status: 'not-started',
+                            lockedBy: null,
+                            isLocked: false,
+                            readerName: ''
+                        }).then(() => {
+                            renderJuzTable();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'تمت إعادة التعيين',
+                                text: `تمت إعادة تعيين الجزء ${juzNumber} بنجاح.`,
+                                showConfirmButton: true,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            });
+                        });
+                    }
+                });
+            };
+
+            // طرد المستخدم من جزء معين
+            window.kickUserFromJuz = function(juzNumber) {
+                Swal.fire({
+                    icon: 'question',
+                    title: 'هل أنت متأكد؟',
+                    text: `هل تريد طرد المستخدم من الجزء ${juzNumber}؟`,
+                    showCancelButton: true,
+                    confirmButtonText: 'نعم',
+                    cancelButtonText: 'لا',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        database.ref(`juz/${juzNumber}`).set({
+                            status: 'not-started',
+                            lockedBy: null,
+                            isLocked: false,
+                            readerName: ''
+                        }).then(() => {
+                            renderJuzTable();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'تم الطرد',
+                                text: `تم طرد المستخدم من الجزء ${juzNumber} بنجاح.`,
+                                showConfirmButton: true,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            });
+                        });
+                    }
+                });
+            };
+
+            // إعادة تعيين جميع الأجزاء
+            window.resetAllJuz = function() {
+                Swal.fire({
+                    icon: 'question',
+                    title: 'هل أنت متأكد؟',
+                    text: 'هل تريد إعادة تعيين جميع الأجزاء؟',
+                    showCancelButton: true,
+                    confirmButtonText: 'نعم',
+                    cancelButtonText: 'لا',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const updates = {};
+                        for (let i = 1; i <= juzCount; i++) {
+                            updates[`juz/${i}`] = {
+                                status: 'not-started',
+                                lockedBy: null,
+                                isLocked: false,
+                                readerName: ''
+                            };
+                        }
+                        database.ref().update(updates).then(() => {
+                            renderJuzTable();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'تمت إعادة التعيين',
+                                text: 'تمت إعادة تعيين جميع الأجزاء بنجاح.',
+                                showConfirmButton: true,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            });
+                        });
+                    }
+                });
+            };
+
+            // عرض عدد الزوار
+            function updateVisitorCount() {
+                database.ref('visitors').once('value', (snapshot) => {
+                    const count = snapshot.val() || 0;
+                    document.getElementById('visitor-count').textContent = count;
+                });
+            }
+
+            // زيادة عدد الزوار
+            function incrementVisitorCount() {
+                database.ref('visitors').transaction((count) => {
+                    return (count || 0) + 1;
+                });
+            }
+
+            // عرض الجدول وعدد الزوار عند التحميل
+            renderJuzTable();
+            updateVisitorCount();
+            incrementVisitorCount();
+        });
+    </script>
+</body>
+</html>
