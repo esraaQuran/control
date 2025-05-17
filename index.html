@@ -1,454 +1,426 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم - خاتمة قرآن كريم</title>
-    <!-- مكتبة Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <!-- مكتبة Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
-    <!-- مكتبة SweetAlert2 -->
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-    <!-- تنسيقات CSS المخصصة -->
-    <style>
-        /* تنسيقات عامة */
-        :root {
-            --primary-color: #d4af37;
-            --secondary-color: #b8860b;
-            --background-color: #faf8f5;
-            --text-color: #5a4a42;
-            --dark-background: #1e1e1e;
-            --dark-text: #e0e0e0;
-            --completed-color: #4CAF50; /* أخضر */
-            --in-progress-color: #FFEB3B; /* أصفر */
-            --not-started-color: #FF5252; /* أحمر */
-            --locked-color: #9E9E9E; /* رمادي */
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>تطبيق المجد المحاسبي</title>
 
-        body {
-            font-family: 'Lateef', serif;
-            font-size: 1.2em;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
-            margin: 0;
-            padding: 0;
-        }
+  <!-- Cairo Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
 
-        body.dark-mode {
-            background-color: var(--dark-background);
-            color: var(--dark-text);
-            font-size: 1.3em;
-        }
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-        /* صندوق العنوان */
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: #fff;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            border: 2px solid #e0d7c3;
-        }
+  <!-- Animate.css, AOS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
 
-        .header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
+  <!-- SweetAlert2, Chart.js, jsPDF -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-        .header h2 {
-            font-size: 1.5rem;
-            margin-bottom: 0;
-        }
+  <!-- AOS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 
-        /* قسم الإحصائيات */
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            gap: 10px;
-            padding: 10px;
-            margin: 10px;
-            background-color: #fffaf0;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+  <style>
+    :root {
+      --primary: #0066ff;
+      --bg: #f6f8fb;
+      --drawer: #fff;
+      --neon: 0 0 8px rgba(0,153,255,.7);
+      --easing: cubic-bezier(.4,0,.2,1);
+      --duration: 0.6s;
+    }
+    * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: all var(--duration) var(--easing); }
+    body, html { margin:0; height:100%; background:var(--bg); color:#222; }
 
-        .stats div {
-            text-align: center;
-            padding: 10px;
-            border-radius: 8px;
-            background-color: var(--primary-color);
-            color: #fff;
-            flex: 1;
-        }
+    /* Header */
+    header {
+      height:56px; background:var(--primary); color:#fff;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 16px; position:fixed; top:0; left:0; right:0; z-index:11;
+      box-shadow:0 2px 6px rgba(0,0,0,.25);
+    }
+    .left-group, .right-group { display:flex; align-items:center; gap:12px; }
+    .burger, #themeToggle {
+      background:none; border:none; color:#fff; font-size:28px; cursor:pointer;
+    }
+    .burger:hover { transform: rotate(15deg) scale(1.1); }
+    #totalLabel {
+      background:rgba(255,255,255,0.2); padding:6px 12px; border-radius:20px;
+      font-weight:600; font-size:16px;
+    }
 
-        .stats div span {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
+    /* Drawer */
+    #drawer {
+      position:fixed; top:0; right:-260px; width:260px; height:100%;
+      background:var(--drawer); padding-top:56px; box-shadow:-2px 0 10px rgba(0,0,0,.25);
+      transition:right var(--duration) var(--easing); overflow-y:auto; z-index:10;
+    }
+    #drawer.open { right:0; }
+    #drawer a {
+      display:flex; align-items:center; gap:10px;
+      padding:14px 22px; text-decoration:none; color:#222;
+      border-bottom:1px solid #eee; transition:background .3s var(--easing);
+    }
+    #drawer a:hover { background:#f0f0f0; color:var(--primary); }
 
-        /* قسم الأجزاء */
-        .dashboard {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 10px;
-            margin: 0 auto;
-        }
+    /* Main */
+    main {
+      padding:80px 20px 30px; max-width:720px; margin:0 auto;
+      transition:filter var(--duration) var(--easing);
+    }
+    .blur { filter:blur(4px); }
 
-        .section {
-            background-color: #fffaf0;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            overflow-x: auto; /* لجعل الجدول قابل للتمرير أفقيًا */
-        }
+    /* Card */
+    .card {
+      background:#fff; border-radius:20px; padding:25px 30px;
+      margin:20px auto; max-width:600px; box-shadow:0 4px 12px rgba(0,0,0,.08);
+    }
+    .card h2, .card h3 { margin:0 0 18px; color:var(--primary); }
+    .card h2 { font-size:28px; text-align:center; }
+    .card h3 { font-size:26px; }
+    .card p { font-size:18px; margin:10px 0 20px; font-weight:600; }
+    .card input, .card button {
+      width:100%; font-size:18px; padding:14px; margin:10px 0;
+      border:1px solid #ccc; border-radius:50px; outline:none;
+      transition:box-shadow var(--duration) var(--easing),transform .2s ease;
+    }
+    .card input:focus { border-color:var(--primary); box-shadow:var(--neon); }
+    .card button {
+      display:flex; align-items:center; justify-content:center; gap:12px;
+      border:none; background:var(--primary); color:#fff; font-weight:700;
+      cursor:pointer; transition:background var(--duration) var(--easing),transform .2s ease;
+    }
+    .card button:hover { transform:scale(1.05); background:#004de0; box-shadow:var(--neon); }
+    .card .log {
+      background:#f3f3f3; border-radius:14px; padding:14px; margin-top:15px;
+      max-height:180px; overflow-y:auto; font-size:15px; text-align:right;
+      white-space:pre-line; line-height:1.4;
+    }
 
-        .section h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-        }
+    /* Chart Container */
+    #chartContainer {
+      background:#fff; border-radius:20px; padding:25px; margin:20px auto;
+      max-width:600px; box-shadow:0 4px 12px rgba(0,0,0,.08);
+    }
 
-        .section table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px; /* الحد الأدنى لعرض الجدول */
-        }
+    /* Skeleton */
+    .skeleton {
+      background:rgba(0,0,0,0.05); border-radius:12px; margin:12px 0; height:20px;
+      background-image:linear-gradient(90deg,rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.1) 50%,rgba(0,0,0,0.05) 100%);
+      background-size:200px 100%; animation:shimmer 1.5s infinite;
+    }
+    @keyframes shimmer { 0%{background-position:-200px 0;}100%{background-position:200px 0;} }
 
-        .section table th,
-        .section table td {
-            padding: 8px;
-            text-align: center;
-            border: 1px solid #e0d7c3;
-        }
-
-        .section table th {
-            background-color: var(--primary-color);
-            color: #fff;
-        }
-
-        .section table td {
-            background-color: #fff;
-        }
-
-        .section table td.completed {
-            background-color: var(--completed-color);
-            color: #fff;
-        }
-
-        .section table td.in-progress {
-            background-color: var(--in-progress-color);
-        }
-
-        .section table td.not-started {
-            background-color: var(--not-started-color);
-            color: #fff;
-        }
-
-        .section table td.locked {
-            background-color: var(--locked-color);
-        }
-
-        .action-button {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            color: #fff;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .action-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-        }
-
-        .action-button.reset {
-            background: linear-gradient(135deg, #FF5252, #D32F2F);
-        }
-
-        .action-button.kick {
-            background: linear-gradient(135deg, #FF9800, #F57C00);
-        }
-
-        /* تحسين التنسيق للهواتف */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.5rem;
-            }
-
-            .header h2 {
-                font-size: 1.2rem;
-            }
-
-            .section h3 {
-                font-size: 1.3rem;
-            }
-
-            .section table th,
-            .section table td {
-                padding: 6px;
-                font-size: 0.9em;
-            }
-
-            .action-button {
-                padding: 5px 10px;
-                font-size: 0.8em;
-            }
-
-            .stats div span {
-                font-size: 1.2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 1.3rem;
-            }
-
-            .header h2 {
-                font-size: 1rem;
-            }
-
-            .section h3 {
-                font-size: 1.1rem;
-            }
-
-            .section table th,
-            .section table td {
-                padding: 4px;
-                font-size: 0.8em;
-            }
-
-            .action-button {
-                padding: 4px 8px;
-                font-size: 0.7em;
-            }
-
-            .stats div span {
-                font-size: 1rem;
-            }
-        }
-    </style>
+    /* Responsive */
+    @media(max-width:700px){
+      main{padding:90px 15px 25px;}
+      #drawer{width:220px;}
+      .card{padding:20px 15px;}
+      header{font-size:16px;}
+    }
+  </style>
 </head>
-<body>
-    <div class="container text-center mt-4">
-        <!-- صندوق العنوان -->
-        <div class="header">
-            <h1><i class="fas fa-cogs"></i> لوحة التحكم</h1>
-            <h2>إدارة الأجزاء والإحصائيات</h2>
-        </div>
+<body data-aos-easing="ease-out-back">
 
-        <!-- قسم الإحصائيات -->
-        <div class="stats">
-            <div>
-                <span id="visitor-count">0</span>
-                <p>عدد الزوار</p>
-            </div>
-            <div>
-                <button class="action-button reset" onclick="resetAllJuz()">إعادة تعيين الكل</button>
-            </div>
-        </div>
-
-        <!-- لوحة التحكم -->
-        <div class="dashboard">
-            <!-- قسم الأجزاء -->
-            <div class="section">
-                <h3>قائمة الأجزاء</h3>
-                <table id="juz-table">
-                    <thead>
-                        <tr>
-                            <th>الجزء</th>
-                            <th>الحالة</th>
-                            <th>القارئ</th>
-                            <th>الإجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- سيتم تعبئة الأجزاء هنا -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  <!-- Header -->
+  <header id="header">
+    <div class="left-group">
+      <button class="burger" onclick="toggleDrawer()" data-aos="fade-down"><i class="fas fa-bars"></i></button>
+      <div id="headerTitle" data-aos="fade-down" data-aos-delay="100">تسجيل الدخول</div>
     </div>
+    <div class="right-group">
+      <div id="totalLabel" data-aos="fade-down" data-aos-delay="200">الإجمالي: 0 ج</div>
+      <button id="themeToggle" onclick="toggleTheme()" data-aos="fade-down" data-aos-delay="300"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
 
-    <!-- مكتبة SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- مكتبة Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <!-- Drawer -->
+  <aside id="drawer">
+    <a href="#" onclick="selectWallet('vodafone')" data-aos="fade-left"> <i class="fas fa-mobile-alt"></i> فودافون كاش</a>
+    <a href="#" onclick="selectWallet('instapay')" data-aos="fade-left" data-aos-delay="100"> <i class="fas fa-credit-card"></i> إنستاباي</a>
+    <a href="#" onclick="selectWallet('orange')" data-aos="fade-left" data-aos-delay="200"> <i class="fas fa-bolt"></i> أورنج كاش</a>
+    <a href="#" onclick="selectWallet('etisalat')" data-aos="fade-left" data-aos-delay="300"> <i class="fas fa-phone-alt"></i> اتصالات كاش</a>
+    <a href="#" onclick="showReports()" data-aos="fade-left" data-aos-delay="400"> <i class="fas fa-chart-pie"></i> التقارير</a>
+    <a href="#" onclick="resetAll()" data-aos="fade-left" data-aos-delay="500"> <i class="fas fa-sync-alt"></i> إعادة تعيين</a>
+    <a href="#" onclick="logout()" style="color:red;" data-aos="fade-left" data-aos-delay="600"> <i class="fas fa-sign-out-alt"></i> تسجيل خروج</a>
+  </aside>
 
-    <!-- الكود JavaScript -->
-    <script>
-        // تهيئة Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyCVSn2N0rlUt48cFKWQ7FygEjpiUa3VoK4",
-            authDomain: "seal-israa.firebaseapp.com",
-            databaseURL: "https://seal-israa-default-rtdb.firebaseio.com",
-            projectId: "seal-israa",
-            storageBucket: "seal-israa.appspot.com",
-            messagingSenderId: "184775142966",
-            appId: "1:184775142966:web:c4798e1aa4be4c47c5b297",
-            measurementId: "G-DPZCHE49WM"
-        };
+  <!-- Main Content -->
+  <main id="content"></main>
+  <div id="chartContainer" style="display:none;">
+    <h3 style="text-align:center;color:var(--primary);">التقارير المالية</h3>
+    <canvas id="walletChart" data-aos="zoom-in"></canvas>
+    <button onclick="hideReports()" style="margin-top:20px;width:100%;"><i class="fas fa-arrow-left"></i> العودة</button>
+  </div>
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+  <script>
+    AOS.init({ duration:600, once:true });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const juzCount = 30;
+    const wallets = ['vodafone','instapay','orange','etisalat'];
+    const names = { 
+      vodafone:'فودافون كاش', 
+      instapay:'إنستاباي', 
+      orange:'أورنج كاش', 
+      etisalat:'اتصالات كاش' 
+    };
+    
+    const colors = {
+      vodafone: '#e60000',
+      instapay: '#0066cc',
+      orange: '#ff6600',
+      etisalat: '#00cc00'
+    };
+    
+    let current = null, loggedIn = false;
+    const q = id => document.getElementById(id);
 
-            // عرض قائمة الأجزاء
-            function renderJuzTable() {
-                database.ref('juz').once('value', (snapshot) => {
-                    const juzData = snapshot.val() || {};
-                    let juzTableHtml = '';
-                    for (let i = 1; i <= juzCount; i++) {
-                        const status = juzData[i]?.status || 'not-started';
-                        const readerName = juzData[i]?.readerName || '';
+    function updateTotal() {
+      const el = q('totalLabel');
+      if (!el) return;
+      const tot = wallets.reduce((s,id)=>s+(parseFloat(localStorage.getItem(`bal-${id}`))||0),0);
+      el.innerText = `الإجمالي: ${tot.toLocaleString('ar-EG',{minimumFractionDigits:2})} ج`;
+    }
 
-                        juzTableHtml += `
-                            <tr>
-                                <td>الجزء ${i}</td>
-                                <td class="${status}">${status === 'completed' ? 'منتهي' : status === 'in-progress' ? 'قيد القراءة' : 'لم يبدأ'}</td>
-                                <td>${readerName}</td>
-                                <td>
-                                    ${status === 'in-progress' ? `
-                                        <button class="action-button kick" onclick="kickUserFromJuz(${i})">طرد</button>
-                                    ` : ''}
-                                    <button class="action-button reset" onclick="resetJuz(${i})">إعادة تعيين</button>
-                                </td>
-                            </tr>
-                        `;
-                    }
-                    document.getElementById('juz-table').querySelector('tbody').innerHTML = juzTableHtml;
-                });
+    function showLogin() {
+      q('drawer').style.display='none';
+      q('themeToggle').style.display='none';
+      q('header').querySelector('.burger').style.display='none';
+      q('headerTitle').innerText='تسجيل الدخول';
+      q('content').innerHTML=`
+        <div class="card" data-aos="zoom-in">
+          <h2><i class="fas fa-lock"></i> تسجيل الدخول</h2>
+          <input id="username" placeholder="اسم المستخدم" value="Esraa"/>
+          <input id="password" type="password" placeholder="كلمة المرور" value="hhhahmed123"/>
+          <button onclick="login()"><i class="fas fa-sign-in-alt"></i> دخول</button>
+        </div>`;
+      updateTotal();
+    }
+
+    function login() {
+      const u=q('username').value, p=q('password').value;
+      if (u!=='Esraa'||p!=='hhhahmed123') return Swal.fire({icon:'error',text:'بيانات غير صحيحة'});
+      loggedIn=true; Swal.fire({icon:'success',text:`مرحباً ${u}`});
+      q('drawer').style.display='block'; q('themeToggle').style.display='block';
+      q('header').querySelector('.burger').style.display='block';
+      selectWallet('vodafone');
+    }
+
+    function toggleDrawer(){ 
+      q('drawer').classList.toggle('open'); 
+      q('content').classList.toggle('blur'); 
+    }
+    
+    function logout(){ 
+      loggedIn=false; 
+      current=null; 
+      Swal.fire({icon:'info',text:'تم تسجيل الخروج'}); 
+      showLogin(); 
+    }
+
+    function selectWallet(id) {
+      if (!loggedIn) return showLogin();
+      current=id; 
+      q('headerTitle').innerText=names[id];
+      q('chartContainer').style.display='none';
+      
+      q('content').innerHTML=`
+        <div class="card" data-aos="fade-up">
+          <h3><i class="${getWalletIcon(id)}"></i> ${names[id]}</h3>
+          <p>الرصيد الحالي: <span id="bal-${id}">--</span> ج</p>
+          <input id="amt-${id}" type="number" placeholder="أدخل المبلغ"/>
+          <button onclick="update('${id}',true)"><i class="fas fa-plus-circle"></i> إضافة</button>
+          <button onclick="update('${id}',false)"><i class="fas fa-minus-circle"></i> سحب</button>
+          <button onclick="exportPDF('${id}')"><i class="fas fa-file-pdf"></i> تصدير إلى PDF</button>
+          <div class="log" id="log-${id}"></div>
+        </div>`;
+      renderWallet(id);
+    }
+    
+    function getWalletIcon(id) {
+      const icons = {
+        vodafone: 'fas fa-mobile-alt',
+        instapay: 'fas fa-credit-card',
+        orange: 'fas fa-bolt',
+        etisalat: 'fas fa-phone-alt'
+      };
+      return icons[id] || 'fas fa-wallet';
+    }
+
+    function renderWallet(id) {
+      const bal = (parseFloat(localStorage.getItem(`bal-${id}`))||0).toFixed(2);
+      const logs = localStorage.getItem(`log-${id}`) || '';
+      q(`bal-${id}`).innerText = bal;
+      q(`log-${id}`).innerHTML = logs || '<div style="color:#888;text-align:center;">لا توجد عمليات سابقة</div>';
+      updateTotal();
+    }
+
+    function update(id, add) {
+      const input=q(`amt-${id}`), v=parseFloat(input.value);
+      if (!v||v<=0) return Swal.fire({icon:'error',text:'المبلغ غير صالح'});
+      let bal=parseFloat(localStorage.getItem(`bal-${id}`))||0;
+      bal = add? bal+v : bal-v;
+      if (bal<0) return Swal.fire({icon:'error',text:'الرصيد غير كافٍ'});
+      localStorage.setItem(`bal-${id}`,bal);
+      const entry=`<div>${new Date().toLocaleString('ar-EG')}: ${add?'+':'-'}${v.toFixed(2)} ج (رصيد جديد: ${bal.toFixed(2)} ج)</div>`;
+      localStorage.setItem(`log-${id}`, entry + (localStorage.getItem(`log-${id}`)||''));
+      input.value=''; 
+      Swal.fire({
+        icon:'success',
+        title: add?'تمت الإضافة':'تم السحب',
+        text: `المبلغ: ${v.toFixed(2)} ج\nالرصيد الجديد: ${bal.toFixed(2)} ج`
+      });
+      renderWallet(id);
+    }
+
+    function resetAll(){
+      Swal.fire({
+        title:'هل أنت متأكد؟',
+        text:'سيتم حذف جميع البيانات المحفوظة',
+        icon:'warning',
+        showCancelButton:true,
+        confirmButtonText:'نعم، احذف',
+        cancelButtonText:'إلغاء'
+      }).then(r=>{ 
+        if(r.isConfirmed){
+          wallets.forEach(id=>{
+            localStorage.removeItem(`bal-${id}`);
+            localStorage.removeItem(`log-${id}`);
+          });
+          if(current) renderWallet(current);
+          updateTotal();
+          Swal.fire({icon:'success',text:'تمت إعادة التعيين'});
+        }
+      });
+    }
+
+    function showReports(){
+      if (!loggedIn) return showLogin();
+      
+      const data = wallets.map(id => parseFloat(localStorage.getItem(`bal-${id}`))||0);
+      const backgroundColors = wallets.map(id => colors[id]);
+      
+      q('content').style.display = 'none';
+      q('chartContainer').style.display = 'block';
+      
+      // Destroy previous chart if exists
+      if(window.walletChart) window.walletChart.destroy();
+      
+      const ctx = q('walletChart').getContext('2d');
+      window.walletChart = new Chart(ctx,{
+        type:'pie',
+        data:{
+          labels: wallets.map(id => names[id]),
+          datasets:[{
+            data: wallets.map(id => parseFloat(localStorage.getItem(`bal-${id}`))||0),
+            backgroundColor: backgroundColors,
+            hoverOffset: 10,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              rtl: true
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.raw || 0;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = Math.round((value / total) * 100);
+                  return `${label}: ${value.toFixed(2)} ج (${percentage}%)`;
+                }
+              }
             }
+          }
+        }
+      });
+    }
+    
+    function hideReports() {
+      q('chartContainer').style.display = 'none';
+      q('content').style.display = 'block';
+      if(current) selectWallet(current);
+    }
 
-            // إعادة تعيين جزء معين
-            window.resetJuz = function(juzNumber) {
-                Swal.fire({
-                    icon: 'question',
-                    title: 'هل أنت متأكد؟',
-                    text: `هل تريد إعادة تعيين الجزء ${juzNumber}؟`,
-                    showCancelButton: true,
-                    confirmButtonText: 'نعم',
-                    cancelButtonText: 'لا',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        database.ref(`juz/${juzNumber}`).set({
-                            status: 'not-started',
-                            lockedBy: null,
-                            isLocked: false,
-                            readerName: ''
-                        }).then(() => {
-                            renderJuzTable();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تمت إعادة التعيين',
-                                text: `تمت إعادة تعيين الجزء ${juzNumber} بنجاح.`,
-                                showConfirmButton: true,
-                                timer: 3000,
-                                timerProgressBar: true,
-                            });
-                        });
-                    }
-                });
-            };
-
-            // طرد المستخدم من جزء معين
-            window.kickUserFromJuz = function(juzNumber) {
-                Swal.fire({
-                    icon: 'question',
-                    title: 'هل أنت متأكد؟',
-                    text: `هل تريد طرد المستخدم من الجزء ${juzNumber}؟`,
-                    showCancelButton: true,
-                    confirmButtonText: 'نعم',
-                    cancelButtonText: 'لا',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        database.ref(`juz/${juzNumber}`).set({
-                            status: 'not-started',
-                            lockedBy: null,
-                            isLocked: false,
-                            readerName: ''
-                        }).then(() => {
-                            renderJuzTable();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الطرد',
-                                text: `تم طرد المستخدم من الجزء ${juzNumber} بنجاح.`,
-                                showConfirmButton: true,
-                                timer: 3000,
-                                timerProgressBar: true,
-                            });
-                        });
-                    }
-                });
-            };
-
-            // إعادة تعيين جميع الأجزاء
-            window.resetAllJuz = function() {
-                Swal.fire({
-                    icon: 'question',
-                    title: 'هل أنت متأكد؟',
-                    text: 'هل تريد إعادة تعيين جميع الأجزاء؟',
-                    showCancelButton: true,
-                    confirmButtonText: 'نعم',
-                    cancelButtonText: 'لا',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const updates = {};
-                        for (let i = 1; i <= juzCount; i++) {
-                            updates[`juz/${i}`] = {
-                                status: 'not-started',
-                                lockedBy: null,
-                                isLocked: false,
-                                readerName: ''
-                            };
-                        }
-                        database.ref().update(updates).then(() => {
-                            renderJuzTable();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تمت إعادة التعيين',
-                                text: 'تمت إعادة تعيين جميع الأجزاء بنجاح.',
-                                showConfirmButton: true,
-                                timer: 3000,
-                                timerProgressBar: true,
-                            });
-                        });
-                    }
-                });
-            };
-
-            // عرض عدد الزوار
-            function updateVisitorCount() {
-                database.ref('visitors').once('value', (snapshot) => {
-                    const count = snapshot.val() || 0;
-                    document.getElementById('visitor-count').textContent = count;
-                });
-            }
-
-            // زيادة عدد الزوار
-            function incrementVisitorCount() {
-                database.ref('visitors').transaction((count) => {
-                    return (count || 0) + 1;
-                });
-            }
-
-            // عرض الجدول وعدد الزوار عند التحميل
-            renderJuzTable();
-            updateVisitorCount();
-            incrementVisitorCount();
+    async function exportPDF(id){
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'pt',
+        format: 'a4'
+      });
+      
+      // Set Arabic font (simplified approach)
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(22);
+      
+      // Title
+      doc.text(`كشف الحساب — ${names[id]}`, 40, 50);
+      
+      // Balance
+      doc.setFontSize(16);
+      const bal = (parseFloat(localStorage.getItem(`bal-${id}`))||0).toFixed(2);
+      doc.text(`الرصيد الحالي: ${bal} ج.م`, 40, 90);
+      
+      // Transactions header
+      doc.setFontSize(18);
+      doc.text('سجل العمليات:', 40, 120);
+      
+      // Transactions
+      doc.setFontSize(12);
+      let y = 150;
+      const logs = localStorage.getItem(`log-${id}`) || '';
+      const logEntries = logs.split('</div>').filter(entry => entry.trim());
+      
+      if(logEntries.length === 0) {
+        doc.text('لا توجد عمليات مسجلة', 40, y);
+      } else {
+        logEntries.forEach(entry => {
+          const text = entry.replace(/<div>/g, '').trim();
+          if(text && y < 700) {
+            doc.text(text, 40, y);
+            y += 20;
+          } else if(text) {
+            doc.addPage();
+            y = 40;
+            doc.text(text, 40, y);
+            y += 20;
+          }
         });
-    </script>
+      }
+      
+      // Save the PDF
+      doc.save(`كشف_حساب_${names[id]}_${new Date().toLocaleDateString('ar-EG')}.pdf`);
+      Swal.fire({icon:'success',text:'تم تصدير كشف الحساب بنجاح'});
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      const isDark = body.classList.toggle('dark-theme');
+      
+      if(isDark) {
+        body.style.setProperty('--bg', '#1a1a1a');
+        body.style.setProperty('--drawer', '#2d2d2d');
+        body.style.setProperty('--primary', '#4a90e2');
+        q('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
+      } else {
+        body.style.setProperty('--bg', '#f6f8fb');
+        body.style.setProperty('--drawer', '#fff');
+        body.style.setProperty('--primary', '#0066ff');
+        q('themeToggle').innerHTML = '<i class="fas fa-moon"></i>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      showLogin();
+    });
+  </script>
 </body>
 </html>
