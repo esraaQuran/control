@@ -1,468 +1,155 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#007bff" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>تطبيق المجد المحاسبي</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="invoice_1746881876718.jpg" />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-
+  <meta charset="UTF-8">
+  <title>مولد QR احترافي</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    :root {
-      --primary: #007bff;
-      --bg: #e3f2fd;
-      --drawer: #ffffff;
-      --neon: 0 0 8px rgba(0,123,255,0.5);
-      --easing: cubic-bezier(.4,0,.2,1);
-      --duration: 0.6s;
+    body {
+      font-family: 'Tahoma', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      direction: rtl;
+      text-align: center;
     }
-    * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: all var(--duration) var(--easing); }
-    body, html { margin:0; height:100%; background:var(--bg); color:#222; font-size:18px; }
-
-    /* Header */
     header {
-      height:60px; background:var(--primary); color:#fff;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:0 16px; position:sticky; top:0; left:0; right:0; z-index:11;
-      box-shadow:0 3px 8px rgba(0,0,0,0.15);
+      background: linear-gradient(90deg, #007bff, #00d4ff);
+      color: white;
+      padding: 20px;
+      position: relative;
     }
-    .left-group, .right-group { display:flex; align-items:center; gap:12px; }
-    .burger {
-      background:none; border:none; color:#fff; font-size:30px; cursor:pointer; padding:10px;
+    header h1 {
+      margin: 0;
     }
-    .burger:hover { transform: rotate(15deg) scale(1.1); }
-    #totalLabel {
-      background:rgba(255,255,255,0.2); padding:8px 14px; border-radius:20px;
-      font-weight:600; font-size:18px;
+    header .logo {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      font-size: 14px;
+      color: #e0e0e0;
     }
-
-    /* Drawer */
-    #drawer {
-      position:fixed; top:0; right:-260px; width:260px; height:100%;
-      background:var(--drawer); padding-top:60px; box-shadow:-2px 0 12px rgba(0,0,0,0.1);
-      transition:right var(--duration) var(--easing); overflow-y:auto; z-index:10;
-      border-left: 1px solid #eee;
+    .container {
+      margin: 40px auto;
+      max-width: 500px;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
-    #drawer.open { right:0; }
-    #drawer a {
-      display:flex; align-items:center; gap:12px;
-      padding:16px 22px; text-decoration:none; color:#222;
-      border-bottom:1px solid #eee; transition:background .3s var(--easing); font-size:20px;
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
     }
-    #drawer a:hover { background:#f5f5f5; color:var(--primary); }
-
-    /* Main */
-    main {
-      padding:80px 20px 30px; max-width:720px; margin:0 auto;
-      transition:filter var(--duration) var(--easing);
+    button {
+      background-color: #1e90ff;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
     }
-    .blur { filter:blur(4px); }
-
-    /* Card */
-    .card {
-      background:#fff; border-radius:20px; padding:25px 30px;
-      margin:20px auto; max-width:600px; box-shadow:0 4px 16px rgba(0,0,0,0.1);
+    #qrcode {
+      margin-top: 20px;
     }
-    .card h2, .card h3 { margin:0 0 18px; color:var(--primary); }
-    .card h2 { font-size:30px; text-align:center; }
-    .card h3 { font-size:28px; }
-    .card p { font-size:20px; margin:10px 0 20px; font-weight:600; }
-    .card input, .card button {
-      width:100%; font-size:20px; padding:16px; margin:12px 0;
-      border:1px solid #ccc; border-radius:50px; outline:none;
-      transition:box-shadow var(--duration) var(--easing),transform .2s ease;
+    canvas {
+      display: block;
+      margin: 10px auto;
     }
-    .card input:focus { border-color:var(--primary); box-shadow:var(--neon); }
-    .card button {
-      display:flex; align-items:center; justify-content:center; gap:12px;
-      border:none; background:var(--primary); color:#fff; font-weight:700;
-      cursor:pointer; transition:background var(--duration) var(--easing),transform .2s ease;
-      padding:16px;
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      border-top: 1px solid #ccc;
     }
-    .card button:hover { transform:scale(1.05); background:#0056b3; box-shadow:var(--neon); }
-    .card .log {
-      background:#f3f3f3; border-radius:14px; padding:16px; margin-top:15px;
-      max-height:200px; overflow-y:auto; font-size:18px; text-align:right;
-      line-height:1.6;
+    footer a {
+      text-decoration: none;
+      color: #1e90ff;
     }
-    .log-entry {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:8px 0; border-bottom:1px solid #eee;
-    }
-    .log-entry:last-child { border-bottom:none; }
-    .log-entry .icon { font-size:20px; }
-    .log-entry.add { color:#2e7d32; }
-    .log-entry.subtract { color:#d32f2f; }
-    .log-entry .details { flex-grow:1; margin:0 10px; }
-    .log-entry .amount { font-weight:600; }
-
-    /* Chart Container */
-    #chartContainer {
-      background:#fff; border-radius:20px; padding:25px; margin:20px auto;
-      max-width:600px; box-shadow:0 4px 16px rgba(0,0,0,0.1);
-    }
-
-    /* Skeleton */
-    .skeleton {
-      background:rgba(0,0,0,0.05); border-radius:12px; margin:12px 0; height:20px;
-      background-image:linear-gradient(90deg,rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.1) 50%,rgba(0,0,0,0.05) 100%);
-      background-size:200px 100%; animation:shimmer 1.5s infinite;
-    }
-    @keyframes shimmer { 0%{background-position:-200px 0;}100%{background-position:200px 0;} }
-
-    /* Responsive */
-    @media(max-width:700px){
-      main { padding:90px 15px 25px; }
-      #drawer { width:220px; }
-      .card { padding:20px 15px; }
-      header { font-size:16px; }
-      .card h2 { font-size:26px; }
-      .card h3 { font-size:24px; }
-      .card p { font-size:18px; }
-      .card input, .card button { font-size:18px; padding:14px; }
-      .log { font-size:16px; }
+    .about {
+      margin-top: 40px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
   </style>
 </head>
-<body data-aos-easing="ease-out-back">
-  <!-- Header -->
-  <header id="header">
-    <div class="left-group">
-      <button class="burger" onclick="toggleDrawer()" data-aos="fade-down"><i class="fas fa-bars"></i></button>
-      <div id="headerTitle" data-aos="fade-down" data-aos-delay="100">تسجيل الدخول</div>
-    </div>
-    <div class="right-group">
-      <div id="totalLabel" data-aos="fade-down" data-aos-delay="200">الإجمالي: 0 ج</div>
-    </div>
-  </header>
+<body>
 
-  <!-- Drawer -->
-  <aside id="drawer">
-    <a href="#" onclick="selectWallet('vodafone')" data-aos="fade-left"> <i class="fas fa-mobile-alt"></i> فودافون كاش</a>
-    <a href="#" onclick="selectWallet('instapay')" data-aos="fade-left" data-aos-delay="100"> <i class="fas fa-credit-card"></i> إنستاباي</a>
-    <a href="#" onclick="selectWallet('orange')" data-aos="fade-left" data-aos-delay="200"> <i class="fas fa-bolt"></i> أورنج كاش</a>
-    <a href="#" onclick="selectWallet('etisalat')" data-aos="fade-left" data-aos-delay="300"> <i class="fas fa-phone-alt"></i> اتصالات كاش</a>
-    <a href="#" onclick="showReports()" data-aos="fade-left" data-aos-delay="400"> <i class="fas fa-chart-pie"></i> التقارير</a>
-    <a href="#" onclick="resetAll()" data-aos="fade-left" data-aos-delay="500"> <i class="fas fa-sync-alt"></i> إعادة تعيين</a>
-    <a href="#" onclick="logout()" style="color:#d32f2f;" data-aos="fade-left" data-aos-delay="600"> <i class="fas fa-sign-out-alt"></i> تسجيل خروج</a>
-  </aside>
+<header>
+  <h1>مولد رموز QR الاحترافي</h1>
+  <div class="logo">QR by Mahmoud</div>
+</header>
 
-  <!-- Main Content -->
-  <main id="content"></main>
-  <div id="chartContainer" style="display:none;">
-    <h3 style="text-align:center;color:var(--primary);">التقارير المالية</h3>
-    <canvas id="walletChart" data-aos="zoom-in"></canvas>
-    <button onclick="hideReports()" style="margin-top:20px;width:100%;"><i class="fas fa-arrow-left"></i> العودة</button>
-  </div>
+<div class="container">
+  <h2>أدخل النص أو الرابط</h2>
+  <input type="text" id="text" placeholder="أدخل الرابط هنا...">
+  <button onclick="generateQR()">إنشاء رمز QR</button>
+  <button onclick="downloadQR()">💾 تحميل الرمز</button>
+  <div id="qrcode"></div>
+</div>
 
-  <script>
-    AOS.init({ duration:600, once:true });
+<div class="about">
+  <h2>📄 حول الموقع</h2>
+  <p>مرحبًا بك في <strong>مولد QR الاحترافي</strong> – أداة سريعة وسهلة لإنشاء رموز QR لأي نص أو رابط.</p>
+  <p>تم تطوير هذا الموقع بواسطة <strong>Mahmoud A Gamal</strong> بهدف تسهيل إنشاء ومشاركة رموز QR بطريقة بسيطة وعملية.</p>
+</div>
 
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(reg => console.log('Service Worker registered'))
-          .catch(err => console.log('Service Worker registration failed:', err));
-      });
+<footer>
+  <h3>💎 دعم المشروع عبر فودافون كاش</h3>
+  <p>يمكنك التحويل على:</p>
+  <h2 style="color: #d00000;">01018397675</h2>
+  <p>الاسم: Mahmoud A Gamal</p>
+  <button onclick="copyNumber()" style="margin-top: 10px; padding: 10px 20px; background-color: #ff0000; color: white; border: none; border-radius: 6px;">📋 نسخ الرقم</button>
+  <p style="margin-top: 12px;">بعد التحويل، يُرجى إرسال إثبات الدفع على <a href="mailto:me0491642@gmail.com">me0491642@gmail.com</a></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  var qrCodeInstance;
+
+  function generateQR() {
+    var container = document.getElementById("qrcode");
+    container.innerHTML = "";
+    var input = document.getElementById("text").value.trim();
+    if (!input) {
+      alert("يرجى إدخال نص أو رابط.");
+      return;
     }
-
-    const wallets = ['vodafone','instapay','orange','etisalat'];
-    const names = { 
-      vodafone:'فودافون كاش', 
-      instapay:'إنستاباي', 
-      orange:'أورنج كاش', 
-      etisalat:'اتصالات كاش' 
-    };
-
-    const colors = {
-      vodafone: '#d32f2f',
-      instapay: '#0288d1',
-      orange: '#f57c00',
-      etisalat: '#2e7d32'
-    };
-
-    let current = null, loggedIn = false;
-    const q = id => document.getElementById(id);
-
-    function getToday() {
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    }
-
-    function formatTime(date) {
-      const hours = date.getHours();
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const ampm = hours >= 12 ? 'م' : 'ص';
-      const hour12 = hours % 12 || 12;
-      return `${hour12}:${minutes} ${ampm}`;
-    }
-
-    function checkAndResetInstapay() {
-      const lastReset = localStorage.getItem('lastReset-instapay');
-      const today = getToday();
-      if (!lastReset || lastReset !== today) {
-        localStorage.setItem('bal-instapay', 120000);
-        localStorage.setItem('lastReset-instapay', today);
-        localStorage.removeItem('log-instapay'); // Clear log daily
-      }
-    }
-
-    function updateTotal() {
-      const el = q('totalLabel');
-      if (!el) return;
-      const tot = wallets.reduce((s,id)=>s+(parseFloat(localStorage.getItem(`bal-${id}`))||0),0);
-      el.innerText = `الإجمالي: ${tot.toLocaleString('ar-EG',{minimumFractionDigits:2})} ج`;
-    }
-
-    function showLogin() {
-      q('drawer').style.display='none';
-      q('header').querySelector('.burger').style.display='none';
-      q('headerTitle').innerText='تسجيل الدخول';
-      q('content').innerHTML=`
-        <div class="card" data-aos="zoom-in">
-          <h2><i class="fas fa-lock"></i> تسجيل الدخول</h2>
-          <input id="username" placeholder="اسم المستخدم" value="Esraa"/>
-          <input id="password" type="password" placeholder="كلمة المرور" value="hhhahmed123"/>
-          <button onclick="login()"><i class="fas fa-sign-in-alt"></i> دخول</button>
-        </div>`;
-      updateTotal();
-    }
-
-    function login() {
-      const u=q('username').value, p=q('password').value;
-      if (u!=='Esraa'||p!=='hhhahmed123') return Swal.fire({icon:'error',text:'بيانات غير صحيحة'});
-      loggedIn=true; Swal.fire({icon:'success',text:`مرحباً ${u}`});
-      q('drawer').style.display='block';
-      q('header').querySelector('.burger').style.display='block';
-      selectWallet('vodafone');
-    }
-
-    function toggleDrawer(){ 
-      q('drawer').classList.toggle('open'); 
-      q('content').classList.toggle('blur'); 
-    }
-
-    function logout(){ 
-      loggedIn=false; 
-      current=null; 
-      Swal.fire({icon:'info',text:'تم تسجيل الخروج'}); 
-      showLogin(); 
-    }
-
-    function selectWallet(id) {
-      if (!loggedIn) return showLogin();
-      current=id; 
-      q('headerTitle').innerText=names[id];
-      q('chartContainer').style.display='none';
-
-      if (id === 'instapay') {
-        checkAndResetInstapay();
-        q('content').innerHTML=`
-          <div class="card" data-aos="fade-up">
-            <h3><i class="${getWalletIcon(id)}"></i> ${names[id]}</h3>
-            <p>الرصيد الحالي: <span id="bal-${id}">--</span> ج</p>
-            <input id="amt-${id}" type="number" placeholder="أدخل المبلغ"/>
-            <button onclick="update('${id}',false)"><i class="fas fa-minus-circle"></i> سحب</button>
-            <button onclick="exportPDF('${id}')"><i class="fas fa-file-pdf"></i> تصدير إلى PDF</button>
-            <div class="log" id="log-${id}"></div>
-          </div>`;
-      } else {
-        q('content').innerHTML=`
-          <div class="card" data-aos="fade-up">
-            <h3><i class="${getWalletIcon(id)}"></i> ${names[id]}</h3>
-            <p>الرصيد الحالي: <span id="bal-${id}">--</span> ج</p>
-            <input id="amt-${id}" type="number" placeholder="أدخل المبلغ"/>
-            <button onclick="update('${id}',true)"><i class="fas fa-plus-circle"></i> إضافة</button>
-            <button onclick="update('${id}',false)"><i class="fas fa-minus-circle"></i> سحب</button>
-            <button onclick="exportPDF('${id}')"><i class="fas fa-file-pdf"></i> تصدير إلى PDF</button>
-            <div class="log" id="log-${id}"></div>
-          </div>`;
-      }
-      renderWallet(id);
-    }
-
-    function getWalletIcon(id) {
-      const icons = {
-        vodafone: 'fas fa-mobile-alt',
-        instapay: 'fas fa-credit-card',
-        orange: 'fas fa-bolt',
-        etisalat: 'fas fa-phone-alt'
-      };
-      return icons[id] || 'fas fa-wallet';
-    }
-
-    function renderWallet(id) {
-      const bal = (parseFloat(localStorage.getItem(`bal-${id}`))||0).toFixed(2);
-      const logs = localStorage.getItem(`log-${id}`) || '';
-      q(`bal-${id}`).innerText = bal;
-      q(`log-${id}`).innerHTML = logs || '<div style="color:#888;text-align:center;">لا توجد عمليات سابقة</div>';
-      updateTotal();
-    }
-
-    function update(id, add) {
-      const input=q(`amt-${id}`), v=parseFloat(input.value);
-      if (!v||v<=0) return Swal.fire({icon:'error',text:'المبلغ غير صالح'});
-      let bal=parseFloat(localStorage.getItem(`bal-${id}`))||0;
-      bal = add ? bal+v : bal-v;
-      if (bal<0) return Swal.fire({icon:'error',text:'الرصيد غير كافٍ'});
-      localStorage.setItem(`bal-${id}`,bal);
-      const now = new Date();
-      const entry = `
-        <div class="log-entry ${add ? 'add' : 'subtract'}">
-          <span class="icon">${add ? '<i class="fas fa-plus-circle"></i>' : '<i class="fas fa-minus-circle"></i>'}</span>
-          <span class="details">${getToday()} | ${formatTime(now)}</span>
-          <span class="amount">${add ? '+' : '-'}${v.toFixed(2)} ج</span>
-        </div>`;
-      localStorage.setItem(`log-${id}`, entry + (localStorage.getItem(`log-${id}`)||''));
-      input.value=''; 
-      Swal.fire({
-        icon:'success',
-        title: add?'تمت الإضافة':'تم السحب',
-        text: `المبلغ: ${v.toFixed(2)} ج\nالرصيد الجديد: ${bal.toFixed(2)} ج`
-      });
-      renderWallet(id);
-    }
-
-    function resetAll(){
-      Swal.fire({
-        title:'هل أنت متأكد؟',
-        text:'سيتم حذف جميع البيانات المحفوظة',
-        icon:'warning',
-        showCancelButton:true,
-        confirmButtonText:'نعم، احذف',
-        cancelButtonText:'إلغاء'
-      }).then(r=>{ 
-        if(r.isConfirmed){
-          wallets.forEach(id=>{
-            localStorage.removeItem(`bal-${id}`);
-            localStorage.removeItem(`log-${id}`);
-            if (id === 'instapay') {
-              localStorage.removeItem('lastReset-instapay');
-            }
-          });
-          if(current) renderWallet(current);
-          updateTotal();
-          Swal.fire({icon:'success',text:'تمت إعادة التعيين'});
-        }
-      });
-    }
-
-    function showReports(){
-      if (!loggedIn) return showLogin();
-
-      const data = wallets.map(id => parseFloat(localStorage.getItem(`bal-${id}`))||0);
-      const backgroundColors = wallets.map(id => colors[id]);
-
-      q('content').style.display = 'none';
-      q('chartContainer').style.display = 'block';
-
-      if(window.walletChart) window.walletChart.destroy();
-
-      const ctx = q('walletChart').getContext('2d');
-      window.walletChart = new Chart(ctx,{
-        type:'pie',
-        data:{
-          labels: wallets.map(id => names[id]),
-          datasets:[{
-            data: data,
-            backgroundColor: backgroundColors,
-            hoverOffset: 10,
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              rtl: true
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  const label = context.label || '';
-                  const value = context.raw || 0;
-                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                  const percentage = total ? Math.round((value / total) * 100) : 0;
-                  return `${label}: ${value.toFixed(2)} ج (${percentage}%)`;
-                }
-              }
-            }
-          }
-        }
-      });
-    }
-
-    function hideReports() {
-      q('chartContainer').style.display = 'none';
-      q('content').style.display = 'block';
-      if(current) selectWallet(current);
-    }
-
-    async function exportPDF(id){
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({
-        orientation: 'portrait',
-        unit: 'pt',
-        format: 'a4'
-      });
-
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(22);
-
-      doc.text(`كشف الحساب — ${names[id]}`, 40, 50);
-
-      doc.setFontSize(16);
-      const bal = (parseFloat(localStorage.getItem(`bal-${id}`))||0).toFixed(2);
-      doc.text(`الرصيد الحالي: ${bal} ج.م`, 40, 90);
-
-      doc.setFontSize(18);
-      doc.text('سجل العمليات:', 40, 120);
-
-      doc.setFontSize(12);
-      let y = 150;
-      const logs = localStorage.getItem(`log-${id}`) || '';
-      const logEntries = logs.split('</div>').filter(entry => entry.trim());
-
-      if(logEntries.length === 0) {
-        doc.text('لا توجد عمليات مسجلة', 40, y);
-      } else {
-        logEntries.forEach(entry => {
-          const text = entry.replace(/<div[^>]*>/g, '').trim();
-          if(text && y < 700) {
-            doc.text(text, 40, y);
-            y += 20;
-          } else if(text) {
-            doc.addPage();
-            y = 40;
-            doc.text(text, 40, y);
-            y += 20;
-          }
-        });
-      }
-
-      doc.save(`كشف_حساب_${names[id]}_${new Date().toLocaleDateString('ar-EG')}.pdf`);
-      Swal.fire({icon:'success',text:'تم تصدير كشف الحساب بنجاح'});
-    }
-
-    document.addEventListener('DOMContentLoaded',()=>{
-      showLogin();
+    qrCodeInstance = new QRCode(container, {
+      text: input,
+      width: 200,
+      height: 200
     });
-  </script>
+  }
+
+  function downloadQR() {
+    var img = document.querySelector("#qrcode img") || document.querySelector("#qrcode canvas");
+    if (img) {
+      var link = document.createElement("a");
+      link.href = img.src || img.toDataURL("image/png");
+      link.download = "qr-code.png";
+      link.click();
+    } else {
+      alert("يرجى إنشاء رمز QR أولاً.");
+    }
+  }
+
+  function copyNumber() {
+    navigator.clipboard.writeText("01018397675");
+    alert("📋 تم نسخ رقم فودافون كاش");
+  }
+</script>
+
 </body>
 </html>
